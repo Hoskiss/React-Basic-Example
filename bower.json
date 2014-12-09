@@ -1,0 +1,23 @@
+{
+  "name": "React-Basic-Example",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Hoskiss/React-Basic-Example",
+  "authors": [
+    "Hoskiss Lin"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "react": "*",
+    "react-bootstrap": "*"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
