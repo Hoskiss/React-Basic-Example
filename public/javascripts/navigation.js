@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Button = ReactBootstrap.Button;
 
 var NavBar = React.createClass({
@@ -19,30 +20,16 @@ var NavBar = React.createClass({
         // as an attribute when the component was created
         var self = this;
 
-        // The map method will loop over the array of menu entries,
-        // and will return a new array with <li> elements.
+        // TODO: remove hard-code, we know there're four elems
         return (
             <div>
-                <ul>{ this.props.items.map(function(m, index){
-
-                    var style = '';
-                    if(self.state.focused == index){
-                        style = 'focused';
-                    }
-                    // Notice the use of the bind() method. It makes the
-                    // index available to the clicked function:
-                    return <li className={style} onClick={self.clicked.bind(self, index)}>{m}</li>;
-                }) }
-
-                </ul>
-                <p>Selected: {this.props.items[this.state.focused]}</p>
-                <Button bsStyle="warning">
-                  <strong>Hi!</strong>
-                </Button>
-
+                <ButtonGroup className="col-md-12">
+                    {this.props.items.map( function(m){
+                        return <Button bsStyle="primary" className="col-md-3">{m}</Button>;
+                    })}
+                </ButtonGroup>
             </div>
         );
-
     }
 });
 
