@@ -3,6 +3,7 @@ var app = app || {};
 var Button = ReactBootstrap.Button;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Input = ReactBootstrap.Input;
+var Well = ReactBootstrap.Well;
 
 (function () {
     'use strict';
@@ -55,27 +56,45 @@ var Input = ReactBootstrap.Input;
         }
     });
 
+    var TodoItems = React.createClass({
+        render: function() {
+            return (
+                <div className="todo-items col-md-6 col-centered">
+                    {this.props.todoList.map(
+                        function(item) {
+                            return (<Well >{item.todo}</Well>);
+                        }
+                    )}
+                </div>
+            );
+        }
+    });
+
     var MyReactApp = React.createClass({
         getInitialState: function() {
             return {
-                todo_list: [],
-                todo_title: undefined,
-                todo_items: undefined
+                todoList: [],
+                todoTitle: undefined,
+                todoItems: undefined
             };
         },
 
         handleNavTodoClick: function() {
             this.setState({
-                todo_title: <TodoTitle handleKeyDown={this.handleTodoTitleKeyDown} />
+                todoTitle: <TodoTitle handleKeyDown={this.handleTodoTitleKeyDown} />
             });
         },
 
         handleTodoTitleKeyDown: function (todo) {
+            var newTodoList = this.state.todoList;
+            newTodoList.push(todo);
+            this.setState({todoList: newTodoList});
+            //console.log(this.state.todoList);
 
-            var new_todo_list = this.state.todo_list;
-            new_todo_list.push(todo);
-            this.setState({todo_list: new_todo_list});
-            console.log(this.state.todo_list);
+            this.setState({
+                todoItems: <TodoItems todoList={this.state.todoList} />
+            });
+
             //var val_1 = this.refs.todoTitle.getDOMNode().value.trim();
             //var val_2 = this.state.refs.todoTitle.getDOMNode().value.trim();
 
@@ -97,8 +116,8 @@ var Input = ReactBootstrap.Input;
                     <NavBar handleTodoClick={this.handleNavTodoClick} />
 
                     <div className="main-content">
-                        {this.state.todo_title}
-                        {this.state.todo_items}
+                        {this.state.todoTitle}
+                        {this.state.todoItems}
                     </div>
                 </div>
             );
