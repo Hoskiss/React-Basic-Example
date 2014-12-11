@@ -25,24 +25,66 @@ var Input = ReactBootstrap.Input;
         }
     });
 
+    var TodoTitle = React.createClass({
+        handleKeyDown: function(event) {
+            if(event.which !== ENTER_KEY) {
+                return;
+            }
+            event.preventDefault();
+
+            var todo = this.refs.todoTitle.getValue();
+            if (!todo) {
+              return;
+            }
+            this.props.handleKeyDown({todo: todo});
+            this.refs.todoTitle.getInputDOMNode().value = '';
+            return;
+        },
+
+        render: function() {
+            return (
+                <div className="todo-list col-md-5 col-centered">
+                    <Input
+                        ref="todoTitle"
+                        type="text"
+                        label="Create your todo list"
+                        placeholder="What needs to be done?"
+                        onKeyDown={this.handleKeyDown} />
+                </div>
+            );
+        }
+    });
+
     var MyReactApp = React.createClass({
         getInitialState: function() {
             return {
-                todo_title: undefined
+                todo_list: [],
+                todo_title: undefined,
+                todo_items: undefined
             };
         },
 
         handleNavTodoClick: function() {
             this.setState({
-                todo_title: (
-                <div className="todo-list col-md-5 col-centered">
-                    <Input
-                        type="text"
-                        label="Create your todo list"
-                        placeholder="What needs to be done?" />
-                </div> )
+                todo_title: <TodoTitle handleKeyDown={this.handleTodoTitleKeyDown} />
             });
+        },
 
+        handleTodoTitleKeyDown: function (todo) {
+
+            var new_todo_list = this.state.todo_list;
+            new_todo_list.push(todo);
+            this.setState({todo_list: new_todo_list});
+            console.log(this.state.todo_list);
+            //var val_1 = this.refs.todoTitle.getDOMNode().value.trim();
+            //var val_2 = this.state.refs.todoTitle.getDOMNode().value.trim();
+
+            //console.log(val_1);
+            //console.log(val_2);
+            // if (val) {
+            //     this.props.model.addTodo(val);
+            //     this.refs.newField.getDOMNode().value = '';
+            // }
         },
 
         handleOthersClick: function() {
@@ -56,6 +98,7 @@ var Input = ReactBootstrap.Input;
 
                     <div className="main-content">
                         {this.state.todo_title}
+                        {this.state.todo_items}
                     </div>
                 </div>
             );
