@@ -20,3 +20,7 @@ button {
 .completed {
     text-decoration:line-through;
 }
+
+.glyphicon-remove-circle {
+    float:right
+}

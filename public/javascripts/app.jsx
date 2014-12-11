@@ -64,7 +64,7 @@ var Well = ReactBootstrap.Well;
             };
         },
 
-        handleCheckItem: function() {
+        handleCheck: function() {
             // this.refs.todo.getDOMNode().innerText = "gee";
             if (this.refs.checkTodo.getChecked()) {
                 this.setState({
@@ -77,16 +77,24 @@ var Well = ReactBootstrap.Well;
             }
         },
 
+        handleRemove: function() {
+            this.props.handleRemoveItem(this.props.data.todo);
+        },
+
         render: function() {
             return (
                 <div className="todo-item">
                     <Input
                         ref="checkTodo"
                         type="checkbox"
-                        onChange={this.handleCheckItem}
+                        onChange={this.handleCheck}
                     />
                     <Well className={this.state.status} ref="todo">
                         {this.props.data.todo}
+                        <span
+                            className="glyphicon glyphicon-remove-circle"
+                            onClick={this.handleRemove}
+                        />
                     </Well>
                 </div>
             );
@@ -108,22 +116,29 @@ var Well = ReactBootstrap.Well;
             });
         },
 
+        // TODO: add id for each todo item
+        handleRemoveItem: function (should_be_id) {
+            var newTodoList = this.state.todoList.filter( function(item) {
+                return (should_be_id !== item.todo);
+            });
+
+            // console.log(newTodoList.length);
+            // weird issue..setState() not works..
+            // this.setState({todoList: newTodoList});
+            this.state.todoList = newTodoList;
+            this.forceUpdate();
+
+            // console.log(this.state.todoList.length);
+            this.updateItems();
+        },
+
         handleTodoTitleKeyDown: function (todo) {
             var newTodoList = this.state.todoList;
             newTodoList.push(todo);
             this.setState({todoList: newTodoList});
             //console.log(this.state.todoList);
 
-            var allItems = this.state.todoList.map( function(todo) {
-                                return (<TodoItem data={todo} />);
-                            });
-            this.setState({
-                todoItems: (
-                    <div className="todo-items col-md-6 col-centered">
-                        {allItems}
-                    </div>
-                )
-            });
+            this.updateItems();
 
             //var val_1 = this.refs.todoTitle.getDOMNode().value.trim();
             //var val_2 = this.state.refs.todoTitle.getDOMNode().value.trim();
@@ -136,8 +151,19 @@ var Well = ReactBootstrap.Well;
             // }
         },
 
-        handleOthersClick: function() {
-            return
+        updateItems: function() {
+            var allItems = this.state.todoList.map( function(todo) {
+                                return (
+                                    <TodoItem data={todo} handleRemoveItem={this.handleRemoveItem} />
+                                );
+                            }.bind(this));
+            this.setState({
+                todoItems: (
+                    <div className="todo-items col-md-6 col-centered">
+                        {allItems}
+                    </div>
+                )
+            });
         },
 
         render: function() {
