@@ -33,11 +33,11 @@ var Well = ReactBootstrap.Well;
             }
             event.preventDefault();
 
-            var todo = this.refs.todoTitle.getValue();
-            if (!todo) {
+            var thing = this.refs.todoTitle.getValue();
+            if (!thing) {
               return;
             }
-            this.props.handleKeyDown({todo: todo});
+            this.props.handleKeyDown({desc: thing});
 
             this.refs.todoTitle.getInputDOMNode().value = '';
             return;
@@ -78,7 +78,7 @@ var Well = ReactBootstrap.Well;
         },
 
         handleRemove: function() {
-            this.props.handleRemoveItem(this.props.data.todo);
+            this.props.handleRemoveItem(this.props.data.id);
         },
 
         render: function() {
@@ -90,7 +90,7 @@ var Well = ReactBootstrap.Well;
                         onChange={this.handleCheck}
                     />
                     <Well className={this.state.status} ref="todo">
-                        {this.props.data.todo}
+                        {this.props.data.desc}
                         <span
                             className="glyphicon glyphicon-remove-circle"
                             onClick={this.handleRemove}
@@ -117,9 +117,9 @@ var Well = ReactBootstrap.Well;
         },
 
         // TODO: add id for each todo item
-        handleRemoveItem: function (should_be_id) {
-            var newTodoList = this.state.todoList.filter( function(item) {
-                return (should_be_id !== item.todo);
+        handleRemoveItem: function (del_id) {
+            var newTodoList = this.state.todoList.filter( function(todo) {
+                return (del_id !== todo.id);
             });
 
             // console.log(newTodoList.length);
@@ -134,11 +134,31 @@ var Well = ReactBootstrap.Well;
 
         handleTodoTitleKeyDown: function (todo) {
             var newTodoList = this.state.todoList;
-            newTodoList.push(todo);
-            this.setState({todoList: newTodoList});
-            //console.log(this.state.todoList);
+            var self = this;
 
-            this.updateItems();
+            console.log();
+            $.ajax({
+                url: "/uuid",
+                type: 'GET',
+                success: function(uuid) {
+                  todo.id = uuid;
+                  console.log("add todo");
+                  console.log(todo);
+
+                  newTodoList.push(todo);
+                  this.setState({todoList: newTodoList});
+                  this.updateItems();
+                }.bind(this),
+                error: function(xhr, status, err) {
+                  console.error(status, err.toString());
+                }
+            });
+
+            // newTodoList.push(todo);
+            // this.setState({todoList: newTodoList});
+            // //console.log(this.state.todoList);
+
+            // this.updateItems();
 
             //var val_1 = this.refs.todoTitle.getDOMNode().value.trim();
             //var val_2 = this.state.refs.todoTitle.getDOMNode().value.trim();
