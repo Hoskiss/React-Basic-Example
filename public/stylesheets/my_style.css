@@ -2,7 +2,21 @@ button {
     margin-top: 5px;
 }
 
-.col-centered{
+.col-centered {
     float: none;
     margin: 0 auto;
+}
+
+/*[type="checkbox"] {
+    float: left;
+    display: inline;
+}*/
+
+.todo-item {
+    /*float: left;*/
+    display: inline;
+}
+
+.completed {
+    text-decoration:line-through;
 }

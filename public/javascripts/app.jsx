@@ -38,6 +38,7 @@ var Well = ReactBootstrap.Well;
               return;
             }
             this.props.handleKeyDown({todo: todo});
+
             this.refs.todoTitle.getInputDOMNode().value = '';
             return;
         },
@@ -56,15 +57,37 @@ var Well = ReactBootstrap.Well;
         }
     });
 
-    var TodoItems = React.createClass({
+    var TodoItem = React.createClass({
+        getInitialState: function() {
+            return {
+                status: "NYS"
+            };
+        },
+
+        handleCheckItem: function() {
+            // this.refs.todo.getDOMNode().innerText = "gee";
+            if (this.refs.checkTodo.getChecked()) {
+                this.setState({
+                    status: "completed"
+                });
+            } else {
+                this.setState({
+                    status: "NYS"
+                });
+            }
+        },
+
         render: function() {
             return (
-                <div className="todo-items col-md-6 col-centered">
-                    {this.props.todoList.map(
-                        function(item) {
-                            return (<Well >{item.todo}</Well>);
-                        }
-                    )}
+                <div className="todo-item">
+                    <Input
+                        ref="checkTodo"
+                        type="checkbox"
+                        onChange={this.handleCheckItem}
+                    />
+                    <Well className={this.state.status} ref="todo">
+                        {this.props.data.todo}
+                    </Well>
                 </div>
             );
         }
@@ -91,8 +114,15 @@ var Well = ReactBootstrap.Well;
             this.setState({todoList: newTodoList});
             //console.log(this.state.todoList);
 
+            var allItems = this.state.todoList.map( function(todo) {
+                                return (<TodoItem data={todo} />);
+                            });
             this.setState({
-                todoItems: <TodoItems todoList={this.state.todoList} />
+                todoItems: (
+                    <div className="todo-items col-md-6 col-centered">
+                        {allItems}
+                    </div>
+                )
             });
 
             //var val_1 = this.refs.todoTitle.getDOMNode().value.trim();
