@@ -60,7 +60,8 @@ var Well = ReactBootstrap.Well;
     var TodoItem = React.createClass({
         getInitialState: function() {
             return {
-                status: "NYS"
+                status: "NYS",
+                canEdit: false
             };
         },
 
@@ -81,6 +82,54 @@ var Well = ReactBootstrap.Well;
             this.props.handleRemoveItem(this.props.data.id);
         },
 
+        handleEdit: function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            this.setState({
+                canEdit: true
+            });
+
+            var el = this.refs.todo.getDOMNode();
+            var range = document.createRange();
+            var sel = window.getSelection();
+
+            range.setStart(
+                el.childNodes[0].childNodes[0], el.innerText.length);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+
+            // try to focus on dic, but not works..
+            $(el).sendkeys(" ");
+            $(el).focus();
+            $(el).click();
+        },
+
+        handleKeyDown: function(event) {
+            if(event.which !== ENTER_KEY) {
+                return;
+            }
+            event.preventDefault();
+
+            var thing = this.refs.todo.getDOMNode().innerText;
+            if (!thing) {
+              return;
+            }
+            // this.props.handleKeyDown({desc: thing});
+            this.setState({
+                canEdit: false
+            });
+            // this.refs.todo.getInputDOMNode().value = '';
+            return;
+        },
+
+        handleBlur: function () {
+            this.setState({
+                canEdit: false
+            });
+        },
+
         render: function() {
             return (
                 <div className="todo-item">
@@ -89,13 +138,20 @@ var Well = ReactBootstrap.Well;
                         type="checkbox"
                         onChange={this.handleCheck}
                     />
-                    <Well className={this.state.status} ref="todo">
+                    <label className={this.state.status}
+                          type="text"
+                          ref="todo"
+                          contentEditable={this.state.canEdit}
+                          onDoubleClick={this.handleEdit}
+                          onKeyDown={this.handleKeyDown}
+                          onBlur={this.handleBlur}
+                    >
                         {this.props.data.desc}
                         <span
                             className="glyphicon glyphicon-remove-circle"
                             onClick={this.handleRemove}
                         />
-                    </Well>
+                    </label>
                 </div>
             );
         }
@@ -116,7 +172,6 @@ var Well = ReactBootstrap.Well;
             });
         },
 
-        // TODO: add id for each todo item
         handleRemoveItem: function (del_id) {
             var newTodoList = this.state.todoList.filter( function(todo) {
                 return (del_id !== todo.id);
@@ -142,8 +197,6 @@ var Well = ReactBootstrap.Well;
                 type: 'GET',
                 success: function(uuid) {
                   todo.id = uuid;
-                  console.log("add todo");
-                  console.log(todo);
 
                   newTodoList.push(todo);
                   this.setState({todoList: newTodoList});
